@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@api/handleApiError';
-import { deleteCoverAPI, getCoversAPI, setEnabledCoverAPI } from '@api/main';
+import { deleteCoverAPI, getAllOrdersAPI, getCoversAPI, setEnabledCoverAPI } from '@api/main';
 import Iconify from '@components/iconify';
 import Label from '@components/label';
 import Scrollbar from '@components/scrollbar';
@@ -8,7 +8,6 @@ import TableHeader from '@components/TableComponent/TableHeader';
 import UILoader from '@components/UILoader';
 import {
   Box,
-  Button,
   Card,
   Container,
   Stack,
@@ -16,11 +15,10 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
+
   TableRow,
   Typography,
 } from '@mui/material';
-import { useConfirmationDialog } from '@utilities/context/ConfirmationDialog';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -29,14 +27,18 @@ import CoverMoreActions from './CoverMoreActions';
 
 const TABLE_HEAD = [
   { id: 'id', label: 'STT', align: 'center' },
-  { id: 'coverName', label: 'coverName', align: 'left' },
-  { id: 'status', label: 'status', algin: 'left' },
+  { id: 'coverName', label: 'Tên khách hàng', align: 'left' },
+  { id: 'status', label: 'Email', algin: 'left' },
+  { id: 'status', label: 'Địa chỉ', algin: 'left' },
+  { id: 'status', label: 'SĐT', algin: 'left' },
+  { id: 'status', label: 'Ngày đặt', algin: 'left' },
+  { id: 'status', label: 'Tổng giá tiền', algin: 'left' },
+  { id: 'status', label: 'Ghi chú', algin: 'left' },
   { id: 'more' },
 ];
 
 const Covers = ({ handleError403 }) => {
   const [refreshToggle, setRefreshToggle] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
   const [isLoading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(0);
@@ -46,14 +48,13 @@ const Covers = ({ handleError403 }) => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const { showConfirmationDialog } = useConfirmationDialog();
+
   const { enqueueSnackbar } = useSnackbar();
-  const intl = useIntl();
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getCoversAPI();
+      const response = await getAllOrdersAPI();
       setData(response.data);
       // setTotalRows(response.data.paging.totalItem);
     } catch (error) {
@@ -70,11 +71,6 @@ const Covers = ({ handleError403 }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggle, pageSize, pageNumber, keyword]);
 
-  const handleOpenAddModal = () => {
-    setSelectedData();
-    setEditModalOpen(true);
-  };
-
   const handleOpenEditModal = (item) => {
     setSelectedData(item);
     setEditModalOpen(true);
@@ -87,62 +83,9 @@ const Covers = ({ handleError403 }) => {
     }
   };
 
-  const handlePageNumberChange = (e, pageNumber) => {
-    setLoading(true);
-    setPageNumber(pageNumber);
-  };
-
-  const handlePageSizeChange = (newPerPage) => {
-    setLoading(true);
-    setPageNumber(0);
-    setPageSize(newPerPage.target.value);
-  };
-
   const handleSearch = async (value) => {
     setPageNumber(0);
     setKeyword(value);
-  };
-
-  const handleSetEnabled = async (cover) => {
-    try {
-      await setEnabledCoverAPI(cover.coverId, { isEnabled: !cover.isEnabled });
-      setRefreshToggle(!refreshToggle);
-      enqueueSnackbar(<FormattedMessage id="toast.success" defaultMessage="Success!" />, {
-        variant: 'success',
-      });
-    } catch (error) {
-      enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
-        variant: 'error',
-      });
-    }
-  };
-
-  const handleDelete = async (cover) => {
-    try {
-      const isConfirmed = await showConfirmationDialog({
-        title: intl.formatMessage({ id: 'dialog.deleteCoverTitle' }),
-        message: intl.formatMessage(
-          {
-            id: 'dialog.deleteCover',
-          },
-          { name: <strong>{cover.coverName}</strong> }
-        ),
-      });
-
-      if (!isConfirmed) {
-        return;
-      }
-
-      await deleteCoverAPI(cover.coverId);
-      setRefreshToggle(!refreshToggle);
-      enqueueSnackbar(<FormattedMessage id="toast.success" defaultMessage="Success!" />, {
-        variant: 'success',
-      });
-    } catch (error) {
-      enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
-        variant: 'error',
-      });
-    }
   };
 
   return (
@@ -150,11 +93,8 @@ const Covers = ({ handleError403 }) => {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            <FormattedMessage id="label.imageBackground" />
+            Đơn hàng
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAddModal}>
-            <FormattedMessage id="button.create" />
-          </Button>
         </Stack>
         <Card>
           <UILoader open={isLoading} />
@@ -183,20 +123,59 @@ const Covers = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
-                              {item.imgBackGroundName}
+                              {item.customer_name}
                             </Typography>
                           </Box>
                         </TableCell>
                         <TableCell align="left">
-                          <Label color={'success'}>{intl.formatMessage({ id: 'label.active' })}</Label>
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.email}
+                            </Typography>
+                          </Box>
                         </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.address}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.phoneNumber}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.createdAt}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.total_price}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography sx={{ mt: 2, ml: 2 }} height="25px" variant="subtitle2" noWrap>
+                              {item.note}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        
                         <TableCell align="right">
                           <CoverMoreActions
                             handleOpenEditModal={() => {
                               handleOpenEditModal(item);
                             }}
-                            handleSetEnabled={handleSetEnabled}
-                            handleDelete={handleDelete}
+                            
                             item={item}
                           />
                         </TableCell>
@@ -207,15 +186,7 @@ const Covers = ({ handleError403 }) => {
               </Table>
             </TableContainer>
           </Scrollbar>
-          {/* <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            page={pageNumber}
-            count={totalRows}
-            rowsPerPage={pageSize}
-            onPageChange={handlePageNumberChange}
-            onRowsPerPageChange={handlePageSizeChange}
-          /> */}
+          
         </Card>
         {editModalOpen && <CoverEditModal open={editModalOpen} close={handleCloseEditModal} cover={selectedData} />}
       </Container>

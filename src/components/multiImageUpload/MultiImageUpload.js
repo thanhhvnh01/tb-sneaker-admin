@@ -30,11 +30,11 @@ const MultiImageUpload = ({ file, setImageIds, images, setIsLoading, setToggle, 
 
   useEffect(() => {
     if (!!images) {
-      setImage1(images[0]?.imageFileUrl);
-      setImage2(images[1]?.imageFileUrl);
-      setImage3(images[2]?.imageFileUrl);
-      setImage4(images[3]?.imageFileUrl);
-      setImage5(images[4]?.imageFileUrl);
+      setImage1(images[0]?.image_url);
+      setImage2(images[1]?.image_url);
+      setImage3(images[2]?.image_url);
+      setImage4(images[3]?.image_url);
+      setImage5(images[4]?.image_url);
       setPhysicalFile1({ imageId: images[0]?.imageId, physicalFileId: null });
       setPhysicalFile2({ imageId: images[1]?.imageId, physicalFileId: null });
       setPhysicalFile3({ imageId: images[2]?.imageId, physicalFileId: null });

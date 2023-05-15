@@ -60,6 +60,7 @@
   "label.coverName": "Tên ảnh bìa",
   "label.imageBackground": "Ảnh bìa",
   "label.productCategory": "Hãng Sản phẩm",
+  "label.size": "Size",
 
   "/* button */": "button text",
   "button.signIn": "Đăng nhập",

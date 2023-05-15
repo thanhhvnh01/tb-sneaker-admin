@@ -41,31 +41,8 @@ const CoverMoreActions = ({ handleOpenEditModal, item, handleSetEnabled, handleD
             handleClose();
           }}
         >
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2, width: 20, height: 20 }} />
-          <FormattedMessage id="button.edit" defaultMessage="Edit" />
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleSetEnabled(item);
-            handleClose();
-          }}
-        >
           <VisibilityIcon sx={{ mr: 2, width: 20, height: 20 }} />
-          {item.isEnabled ? (
-            <FormattedMessage id="button.disabled" defaultMessage="Disable" />
-          ) : (
-            <FormattedMessage id="button.enabled" defaultMessage="Enabled" />
-          )}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleDelete(item);
-            handleClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <DeleteIcon sx={{ mr: 2, width: 20, height: 20 }} />
-          <FormattedMessage id="button.delete" defaultMessage="Delele" />
+          Xem chi tiết
         </MenuItem>
       </MenuPopover>
     </>

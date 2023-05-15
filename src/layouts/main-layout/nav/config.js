@@ -7,6 +7,10 @@ const navConfig = [
         path: '/products',
       },
       {
+        title: 'Nhóm sản phẩm',
+        path: '/product-group',
+      },
+      {
         title: 'Hãng sản phẩm',
         path: '/categories',
       },
@@ -16,8 +20,8 @@ const navConfig = [
     subheader: 'Khác',
     items: [
       {
-        title: 'Ảnh bìa',
-        path: '/covers',
+        title: 'Đơn hàng',
+        path: '/orders',
       },
       {
         title: 'Người đăng ký',

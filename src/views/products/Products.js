@@ -31,6 +31,8 @@ const TABLE_HEAD = [
   { id: 'id', label: 'STT', align: 'center' },
   { id: 'productNameEn', label: 'nameEn', align: 'left' },
   { id: 'productTypeName', label: 'productType', align: 'left' },
+  { id: 'size', label: 'size', align: 'left' },
+  { id: 'quantity', label: 'Số lượng', align: 'left' },
   { id: 'status', label: 'status', align: 'left' },
   { id: 'more' },
 ];
@@ -184,7 +186,7 @@ const ProductGroups = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle2" noWrap>
-                              {item.productName}
+                              {item.product_name + " " + item.size }
                             </Typography>
                           </Box>
                         </TableCell>
@@ -192,7 +194,22 @@ const ProductGroups = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle3" noWrap>
-                              {item.brand}
+                              {item.brand_name}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Box>
+                            <Typography variant="subtitle3" noWrap>
+                              {item.size}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+
+                        <TableCell align="left">
+                          <Box>
+                            <Typography variant="subtitle3" noWrap>
+                              {item.quantity}
                             </Typography>
                           </Box>
                         </TableCell>

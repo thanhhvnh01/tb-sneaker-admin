@@ -1,16 +1,18 @@
 import { getErrorMessage } from '@api/handleApiError';
 import {
-  createProductTypeAPI,
-  getDetailsProductTypeAPI,
-  getEnabledCategoriesAPI,
+  createProductGroupAPI,
+  getBrandsAPI,
+  getProductGroupDetailAPI,
   updateProductTypeAPI,
 } from '@api/main';
 import CustomDialog from '@components/CustomDialog';
 import { FormProvider, RHFTextField } from '@components/hook-forms';
+import { RHFCheckbox } from '@components/hook-forms/RHFCheckbox';
 import RHFSelect from '@components/hook-forms/RHFSelect';
+import MultiImageUpload from '@components/multiImageUpload';
 import UILoader from '@components/UILoader';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, DialogActions, DialogTitle, Typography, useTheme } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { arrayToSelectOptions } from '@utilities/utils';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
@@ -21,6 +23,7 @@ import * as yup from 'yup';
 const ProductTypeEditModal = ({ open, close, productType }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState()
   const intl = useIntl();
   // hooks
   const theme = useTheme();
@@ -28,15 +31,17 @@ const ProductTypeEditModal = ({ open, close, productType }) => {
   const [options, setOptions] = useState([]);
 
   const productTypeModalSchema = yup.object().shape({
-    productTypeNameEn: yup.string().required().max(128).trim(),
-    productTypeNameRu: yup.string().required().max(128).trim(),
-    categoryId: yup.number().required(),
+    productGroupName: yup.string().required().max(128).trim(),
+    brandId: yup.string().required().max(128).trim(),
+    price: yup.number().required(),
+    color: yup.string().required()
   });
 
   const defaultValues = {
-    productTypeNameEn: '',
-    productTypeNameRu: '',
-    categoryId: '',
+    productGroupName: '',
+    brandId: '',
+    price: '',
+    color: ''
   };
 
   const methods = useForm({
@@ -54,17 +59,19 @@ const ProductTypeEditModal = ({ open, close, productType }) => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const categoriesRes = await getEnabledCategoriesAPI();
-      const options = arrayToSelectOptions(categoriesRes.data, 'categoryName', 'categoryId');
+      const brandRes = await getBrandsAPI();
+      const options = arrayToSelectOptions(brandRes.data, 'brand_name', 'brand_id');
       setOptions(options);
       if (!!productType) {
-        const res = await getDetailsProductTypeAPI(productType.productTypeId);
+        const res = await getProductGroupDetailAPI(productType.product_group_id);
+        setData(res.data)
         reset({
           ...defaultValues,
           ...{
-            productTypeNameEn: res.data.productTypeNameEn,
-            productTypeNameRu: res.data.productTypeNameRu,
-            categoryId: res.data.categoryId,
+            productGroupName: res.data.product_group_name,
+            brandId: res.data.brand_id,
+            price: res.data.price,
+            color: res.data.color
           },
         });
       }
@@ -91,10 +98,11 @@ const ProductTypeEditModal = ({ open, close, productType }) => {
           categoryId: data.categoryId,
         });
       } else {
-        await createProductTypeAPI({
-          productTypeNameEn: data.productTypeNameEn,
-          productTypeNameRu: data.productTypeNameRu,
-          categoryId: data.categoryId,
+        await createProductGroupAPI({
+          productGroupName: data.productGroupName,
+          brandId: data.brandId,
+          price: data.price,
+          color: data.color,
         });
       }
       close('SAVED');
@@ -109,53 +117,87 @@ const ProductTypeEditModal = ({ open, close, productType }) => {
   };
 
   return (
-    <CustomDialog fullWidth open={open} onClose={close}>
+    <CustomDialog fullWidth open={open} onClose={close} maxWidth="sm">
       <UILoader open={isLoading} />
       <DialogTitle>
-        {!!productType
-          ? intl.formatMessage({ id: 'label.updateProductType' })
-          : intl.formatMessage({ id: 'label.createProductType' })}
+        {!productType
+          ? "Tạo mới hãng sản phẩm"
+          : "Cập nhật hãng sản phẩm"
+        }
       </DialogTitle>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Box sx={{ px: 5 }}>
-          <Box sx={{ mb: 2 }}>
-            <RHFTextField
-              name="productTypeNameEn"
-              size="small"
-              label={
-                <Box sx={{ display: 'flex' }}>
-                  <FormattedMessage id="label.nameEn" />
-                  <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
-                </Box>
-              }
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <RHFTextField
-              name="productTypeNameRu"
-              size="small"
-              label={
-                <Box sx={{ display: 'flex' }}>
-                  <FormattedMessage id="label.nameRu" />
-                  <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
-                </Box>
-              }
-            />
-          </Box>
+        <DialogContent>
           <Box>
-            <RHFSelect
-              name="categoryId"
-              label={
-                <Box sx={{ display: 'flex' }}>
-                  <FormattedMessage id="label.category" />
-                  <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
+            <Grid container spacing={2.5}>
+              <Grid item md={6}>
+                <RHFTextField
+                  name="productGroupName"
+                  size="small"
+                  label={
+                    <Box sx={{ display: 'flex' }}>
+                      Tên nhóm sản phẩm
+                      <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
+                    </Box>
+                  }
+                />
+              </Grid>
+              <Grid item md={6}>
+                <RHFSelect
+                  name="brandId"
+                  size="small"
+                  options={options}
+                  label={
+                    <Box sx={{ display: 'flex' }}>
+                      Hãng
+                      <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
+                    </Box>
+                  }
+                />
+              </Grid>
+              <Grid item md={6}>
+                <RHFTextField
+                  name="price"
+                  size="small"
+                  label={
+                    <Box sx={{ display: 'flex' }}>
+                      Giá
+                      <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
+                    </Box>
+                  }
+                />
+              </Grid>
+              <Grid item md={6}>
+                <RHFTextField
+                  name="color"
+                  size="small"
+                  label={
+                    <Box sx={{ display: 'flex' }}>
+                      Màu sản phẩm
+                      <Box sx={{ color: theme.palette.error.main }}>&nbsp;*</Box>
+                    </Box>
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid container columns={12}>
+              <Grid item md={6}>
+                <Box mt={1}>
+                  <MultiImageUpload
+                    file={`image`}
+                    images={data?.images}
+                    setIsLoading={setIsLoading}
+                  />
+                  <Stack>
+                    <RHFCheckbox
+                      name={`isBestSelling`}
+                      label={<FormattedMessage id="label.isBestSelling" />}
+                    />
+                  </Stack>
                 </Box>
-              }
-              getOptionLabel={(option) => <Typography id={option.id}>{option.label}</Typography>}
-              options={options}
-            />
+              </Grid>
+            </Grid>
           </Box>
-        </Box>
+        </DialogContent>
         <DialogActions sx={{ px: 5, mt: 1, mb: 1 }}>
           <Button variant="contained" type="submit" disabled={!isDirty || !isValid}>
             {!!productType ? intl.formatMessage({ id: 'button.update' }) : intl.formatMessage({ id: 'button.create' })}

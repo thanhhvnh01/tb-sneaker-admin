@@ -1,9 +1,5 @@
 import axios, { handleRefreshToken } from './base';
 
-export const getProductsAPI = async () => {
-  return axios.get(`${process.env.REACT_APP_API_URL}/products`);
-};
-
 // -----------AUTHENTICATION APIS-----------
 export const refreshToken = async () => {
   return handleRefreshToken();
@@ -14,6 +10,46 @@ export const loginAPI = async (data) => {
     __auth: false,
   });
 };
+
+export const getProductGroupAPI = async (data) => {
+  return axios.post(`${process.env.REACT_APP_API_URL}/product-groups`, data)
+}
+
+export const getProductsAPI = async (data) => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/products`, data)
+}
+
+export const getProductDetailAPI = async (productId) => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/product/${productId}`)
+}
+
+export const getProductGroupDetailAPI = async (productGroupId) => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/product-groups/${productGroupId}`)
+}
+
+export const createProductGroupAPI = async (data) => {
+  return axios.post(`${process.env.REACT_APP_API_URL}/create/product-groups`, data)
+}
+
+export const getProductGroupIdAPI = async () => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/product-groups-id`)
+}
+
+export const getAllOrdersAPI = async () => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/orders`)
+}
+
+export const getOrderDetailsById = async (orderId) => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/orders/${orderId}`)
+}
+
+export const getBrandsAPI = async () => {
+  return axios.get(`${process.env.REACT_APP_API_URL}/brands`)
+}
+
+export const getAllSubsAPI = async ()=>{
+  return axios.get(`${process.env.REACT_APP_API_URL}/subs`)
+}
 
 // -----------USER APIS-----------
 export const getUserInfoAPI = async () => {
@@ -142,6 +178,7 @@ export const getEnabledColorsAPI = async () => {
 };
 
 // -----------PRODUCT APIS-----------
+
 
 export const setEnabledProductAPI = async (productGroupId, data) => {
   return axios.put(`${process.env.REACT_APP_API_URL}/products/${productGroupId}/set-enabled`, data);

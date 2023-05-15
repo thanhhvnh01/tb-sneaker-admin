@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@api/handleApiError';
-import { getSubscribesAPI } from '@api/main';
+import { getAllSubsAPI } from '@api/main';
 import Scrollbar from '@components/scrollbar';
 import TableHeader from '@components/TableComponent/TableHeader';
 import UILoader from '@components/UILoader';
@@ -11,12 +11,10 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TablePagination,
   TableRow,
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -29,10 +27,9 @@ const TABLE_HEAD = [
 
 const Subscribers = ({ handleError403 }) => {
   const [refreshToggle] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
   const [isLoading, setLoading] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize] = useState(10);
+  const [pageNumber] = useState(0);
   const [data, setData] = useState([]);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -40,7 +37,7 @@ const Subscribers = ({ handleError403 }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getSubscribesAPI();
+      const response = await getAllSubsAPI();
       setData(response.data);
       // setTotalRows(response.data.paging.totalItem);
     } catch (error) {
@@ -56,17 +53,6 @@ const Subscribers = ({ handleError403 }) => {
     fetchData(pageSize, pageNumber + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshToggle, pageSize, pageNumber]);
-
-  const handlePageNumberChange = (e, pageNumber) => {
-    setLoading(true);
-    setPageNumber(pageNumber);
-  };
-
-  const handlePageSizeChange = (newPerPage) => {
-    setLoading(true);
-    setPageNumber(0);
-    setPageSize(newPerPage.target.value);
-  };
 
   return (
     <>
@@ -101,7 +87,7 @@ const Subscribers = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle2" noWrap>
-                              {item.timeStamp}
+                              {item.createdAt}
                             </Typography>
                           </Box>
                         </TableCell>

@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@api/handleApiError';
-import { deleteCategoryAPI, getCategoriesAPI, setEnabledCategoryAPI } from '@api/main';
+import { deleteCategoryAPI, getBrandsAPI, getCategoriesAPI, setEnabledCategoryAPI } from '@api/main';
 import Iconify from '@components/iconify';
 import Label from '@components/label';
 import Scrollbar from '@components/scrollbar';
@@ -52,9 +52,8 @@ const Categories = ({ handleError403 }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await getCategoriesAPI();
+      const response = await getBrandsAPI();
       setData(response.data);
-      // setTotalRows(response.data.paging.totalItem);
     } catch (error) {
       enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
         variant: 'error',
@@ -86,34 +85,10 @@ const Categories = ({ handleError403 }) => {
     }
   };
 
-  const handlePageNumberChange = (e, pageNumber) => {
-    setLoading(true);
-    setPageNumber(pageNumber);
-  };
-
-  const handlePageSizeChange = (newPerPage) => {
-    setLoading(true);
-    setPageNumber(0);
-    setPageSize(newPerPage.target.value);
-  };
 
   const handleSearch = async (value) => {
     setPageNumber(0);
     setKeyword(value);
-  };
-
-  const handleSetEnabled = async (category) => {
-    try {
-      await setEnabledCategoryAPI(category.categoryId, { isEnabled: !category.isEnabled });
-      setRefreshToggle(!refreshToggle);
-      enqueueSnackbar(<FormattedMessage id="toast.success" defaultMessage="Success!" />, {
-        variant: 'success',
-      });
-    } catch (error) {
-      enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
-        variant: 'error',
-      });
-    }
   };
 
   const handleDelete = async (category) => {
@@ -143,6 +118,8 @@ const Categories = ({ handleError403 }) => {
       });
     }
   };
+
+  console.log(data);
 
   return (
     <>
@@ -182,7 +159,7 @@ const Categories = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle2" noWrap>
-                              {item.brandName}
+                              {item.brand_name}
                             </Typography>
                           </Box>
                         </TableCell>
@@ -194,7 +171,6 @@ const Categories = ({ handleError403 }) => {
                             handleOpenEditModal={() => {
                               handleOpenEditModal(item);
                             }}
-                            handleSetEnabled={handleSetEnabled}
                             handleDelete={handleDelete}
                             item={item}
                           />

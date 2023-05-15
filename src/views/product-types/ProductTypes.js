@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@api/handleApiError';
-import { deleteProductTypeAPI, getProductTypesAPI, setEnabledProductTypeAPI } from '@api/main';
+import { deleteProductTypeAPI, getProductGroupAPI, getProductTypesAPI, setEnabledProductTypeAPI } from '@api/main';
 import Iconify from '@components/iconify';
 import Label from '@components/label';
 import Scrollbar from '@components/scrollbar';
@@ -30,8 +30,9 @@ import ProductTypeMoreActions from './ProductTypeMoreActions';
 const TABLE_HEAD = [
   { id: 'id', label: 'STT', align: 'center' },
   { id: 'productTypeNameEn', label: 'nameEn', align: 'left' },
-  { id: 'productTypeNameRu', label: 'nameRu', align: 'left' },
-  { id: 'categoryName', label: 'category', align: 'left' },
+  { id: 'productType', label: 'productType', align: 'left' },
+  { id: 'color', label: 'color', align: 'left' },
+  { id: 'price', label: 'price', align: 'left' },
   { id: 'status', label: 'status', align: 'left' },
   { id: 'more' },
 ];
@@ -52,12 +53,12 @@ const ProductTypes = ({ handleError403 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const intl = useIntl();
 
-  const fetchData = async (pageSize, pageNumber, keyword) => {
+  const fetchData = async (data) => {
     try {
       setLoading(true);
-      const response = await getProductTypesAPI(pageSize, pageNumber, keyword, { categoryId: null });
-      setData(response.data.pageData);
-      setTotalRows(response.data.paging.totalItem);
+      const response = await getProductGroupAPI(data);
+      setData(response.data);
+      // setTotalRows(response.data.paging.totalItem);
     } catch (error) {
       enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
         variant: 'error',
@@ -68,9 +69,9 @@ const ProductTypes = ({ handleError403 }) => {
   };
 
   useEffect(() => {
-    fetchData(pageSize, pageNumber + 1, keyword);
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshToggle, pageSize, pageNumber, keyword]);
+  }, [refreshToggle]);
 
   const handleOpenAddModal = () => {
     setSelectedData();
@@ -152,7 +153,7 @@ const ProductTypes = ({ handleError403 }) => {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            <FormattedMessage id="label.productType" />
+            Nhóm sản phẩm
           </Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAddModal}>
             <FormattedMessage id="button.create" />
@@ -185,29 +186,38 @@ const ProductTypes = ({ handleError403 }) => {
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle2" noWrap>
-                              {item.productTypeNameEn}
+                              {item.product_group_name}
                             </Typography>
                           </Box>
                         </TableCell>
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle3" noWrap>
-                              {item.productTypeNameRu}
+                              {item.brand_name}
                             </Typography>
                           </Box>
                         </TableCell>
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle3" noWrap>
-                              {item.categoryName}
+                              {item.color}
                             </Typography>
                           </Box>
                         </TableCell>
                         <TableCell align="left">
-                          <Label color={item.isEnabled ? 'success' : 'error'}>
-                            {item.isEnabled
-                              ? intl.formatMessage({ id: 'label.active' })
-                              : intl.formatMessage({ id: 'label.inactive' })}
+                          <Box>
+                            <Typography variant="subtitle3" noWrap>
+                              {item.price}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell align="left">
+                          <Label color={item.isBestSelling ? 'success' : 'error'}>
+                            {
+                              item.isBestSelling
+                                ? "Bán chạy"
+                                : "Không bán chạy"
+                            }
                           </Label>
                         </TableCell>
                         <TableCell align="right">

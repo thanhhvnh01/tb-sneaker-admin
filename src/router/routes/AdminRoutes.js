@@ -7,7 +7,7 @@ const AdminRoutes = [
     component: lazy(() => import(`@views/categories/Categories`)),
   },
   {
-    path: '/product-types',
+    path: '/product-group',
     exact: true,
     component: lazy(() => import(`@views/product-types/ProductTypes`)),
   },
@@ -37,7 +37,7 @@ const AdminRoutes = [
     component: lazy(() => import(`@views/contacts/Contacts`)),
   },
   {
-    path: '/covers',
+    path: '/orders',
     exact: true,
     component: lazy(() => import(`@views/cover/Covers`)),
   },
