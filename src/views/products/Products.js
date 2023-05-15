@@ -30,7 +30,7 @@ import ProductMoreActions from './ProductMoreActions';
 const TABLE_HEAD = [
   { id: 'id', label: 'STT', align: 'center' },
   { id: 'productNameEn', label: 'nameEn', align: 'left' },
-  { id: 'productTypeName', label: 'productType', align: 'left' },
+  // { id: 'productTypeName', label: 'productType', align: 'left' },
   { id: 'size', label: 'size', align: 'left' },
   { id: 'quantity', label: 'Số lượng', align: 'left' },
   { id: 'status', label: 'status', align: 'left' },
@@ -191,13 +191,13 @@ const ProductGroups = ({ handleError403 }) => {
                           </Box>
                         </TableCell>
 
-                        <TableCell align="left">
+                        {/* <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle3" noWrap>
                               {item.brand_name}
                             </Typography>
                           </Box>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell align="left">
                           <Box>
                             <Typography variant="subtitle3" noWrap>

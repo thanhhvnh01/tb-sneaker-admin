@@ -11,12 +11,12 @@ import RHFSelect from '@components/hook-forms/RHFSelect';
 
 import UILoader from '@components/UILoader';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid,  useTheme } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid, useTheme } from '@mui/material';
 
-import { arrayToSelectOptions} from '@utilities/utils';
+import { arrayToSelectOptions } from '@utilities/utils';
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import {  useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 
@@ -31,7 +31,7 @@ const ProductEditModal = ({ open, close, product }) => {
 
   const defaultValues = {
     productGroupName: '',
-    productName: '', 
+    productName: '',
     quantity: '',
     size: ''
   };
@@ -57,10 +57,10 @@ const ProductEditModal = ({ open, close, product }) => {
   } = methods;
   const productGroupName = watch('productGroupName')
 
-  useEffect(()=>{
-    setValue('productName', options[productGroupName-2]?.label)
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[productGroupName])
+  useEffect(() => {
+    setValue('productName', options[productGroupName - 2]?.label)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productGroupName])
 
   console.log(options);
   const fetchData = async () => {
@@ -79,6 +79,8 @@ const ProductEditModal = ({ open, close, product }) => {
             quantity: res.data.quantity
           },
         });
+        console.log(res.data);
+
       }
     } catch (error) {
       enqueueSnackbar(<FormattedMessage id={getErrorMessage(error)} defaultMessage={getErrorMessage(error)} />, {
@@ -99,26 +101,14 @@ const ProductEditModal = ({ open, close, product }) => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     const formData = {
-      productGroupNameEn: data.productGroupNameEn,
-      productGroupNameRu: data.productGroupNameRu,
-      productTypeId: data.productTypeId,
-      materialTypeId: data.materialTypeId,
-      hairStyleId: data.hairStyleId,
-      measureUnitLengthId: data.measureUnitLengthId,
-      fromLength: data.fromLength,
-      toLength: data.toLength,
-      measureUnitWeightId: data.measureUnitWeightId,
-      weight: data.weight,
-      origin: data.origin,
-      packingRuleId: data.packingRuleId,
-      videoUrl: data.videoUrl,
-      descriptionEn: data.descriptionEn,
-      descriptionRu: data.descriptionRu,
-      colors: data.colors,
+      productGroupId: Number(data.productGroupName),
+      productName: data.productName,
+      quantity: data.quantity,
+      size: data.size
     };
     try {
       if (!!product) {
-        await updateProductAPI(product.productGroupId, formData);
+        await updateProductAPI(product.product_id, formData);
       } else {
         await createProductAPI(formData);
       }

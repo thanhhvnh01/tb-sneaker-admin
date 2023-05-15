@@ -11,6 +11,10 @@ export const loginAPI = async (data) => {
   });
 };
 
+export const updateProductAPI = async (productId, data) => {
+  return axios.put(`${process.env.REACT_APP_API_URL}/update/product/${productId}`, data)
+}
+
 export const getProductGroupAPI = async (data) => {
   return axios.post(`${process.env.REACT_APP_API_URL}/product-groups`, data)
 }
@@ -25,6 +29,10 @@ export const getProductDetailAPI = async (productId) => {
 
 export const getProductGroupDetailAPI = async (productGroupId) => {
   return axios.get(`${process.env.REACT_APP_API_URL}/product-groups/${productGroupId}`)
+}
+
+export const createProductAPI = async (data)=>{
+  return axios.post(`${process.env.REACT_APP_API_URL}/create/products`, data)
 }
 
 export const createProductGroupAPI = async (data) => {
@@ -47,7 +55,7 @@ export const getBrandsAPI = async () => {
   return axios.get(`${process.env.REACT_APP_API_URL}/brands`)
 }
 
-export const getAllSubsAPI = async ()=>{
+export const getAllSubsAPI = async () => {
   return axios.get(`${process.env.REACT_APP_API_URL}/subs`)
 }
 
@@ -190,14 +198,6 @@ export const deleteProductAPI = async (productGroupId) => {
 
 export const getDetailsProductAPI = async (productGroupId) => {
   return axios.get(`${process.env.REACT_APP_API_URL}/products/${productGroupId}/admin`);
-};
-
-export const createProductAPI = async (data) => {
-  return axios.post(`${process.env.REACT_APP_API_URL}/products`, data);
-};
-
-export const updateProductAPI = async (productId, data) => {
-  return axios.put(`${process.env.REACT_APP_API_URL}/products/${productId}`, data);
 };
 
 // -----------SUBSCRIBE APIS-----------
