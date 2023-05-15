@@ -11,6 +11,10 @@ export const loginAPI = async (data) => {
   });
 };
 
+export const createBrandAPI = async(data)=>{
+  return axios.post(`${process.env.REACT_APP_API_URL}/create/brand`, data)
+}
+
 export const updateProductAPI = async (productId, data) => {
   return axios.put(`${process.env.REACT_APP_API_URL}/update/product/${productId}`, data)
 }

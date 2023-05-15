@@ -1,5 +1,5 @@
 import { getErrorMessage } from '@api/handleApiError';
-import { createCategoryAPI, getDetailsCategoryAPI, updateCategoryAPI } from '@api/main';
+import { createBrandAPI, createCategoryAPI, getDetailsCategoryAPI, updateCategoryAPI } from '@api/main';
 import CustomDialog from '@components/CustomDialog';
 import { FormProvider, RHFTextField } from '@components/hook-forms';
 import UILoader from '@components/UILoader';
@@ -18,13 +18,11 @@ const CategoryEditModal = ({ open, close, category }) => {
   const theme = useTheme();
 
   const categoryModalSchema = yup.object().shape({
-    categoryNameEn: yup.string().required().max(128).trim(),
-    categoryNameRu: yup.string().required().max(128).trim(),
+    brandName: yup.string().required().max(128).trim(),
   });
 
   const defaultValues = {
-    categoryNameEn: '',
-    categoryNameRu: '',
+    brandName: '',
   };
 
   const methods = useForm({
@@ -74,7 +72,7 @@ const CategoryEditModal = ({ open, close, category }) => {
           categoryNameRu: data.categoryNameRu,
         });
       } else {
-        await createCategoryAPI({ categoryNameEn: data.categoryNameEn, categoryNameRu: data.categoryNameRu });
+        await createBrandAPI({brandName: data.brandName});
       }
       close('SAVED');
       enqueueSnackbar('Thành công !', {
@@ -99,7 +97,7 @@ const CategoryEditModal = ({ open, close, category }) => {
         <Box sx={{ px: 5 }}>
           <Box sx={{ mb: 2 }}>
             <RHFTextField
-              name="categoryNameEn"
+              name="brandName"
               size="small"
               label={
                 <Box sx={{ display: 'flex' }}>
